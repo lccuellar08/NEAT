@@ -3,17 +3,30 @@ package neat
 import genome.ConnectionGene
 import genome.NodeGene
 import genome.NodeType
-import neat.InnovationTracker
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 
 class InnovationTrackerTest {
     private val innovationTracker = InnovationTracker
 
+    @BeforeTest
+    fun setUp() {
+        innovationTracker.clearAll()
+    }
+
+    @AfterTest
+    fun tearDown() {
+        innovationTracker.clearAll()
+    }
+
+
+    // Test Connection Tracker
     @Test
     fun testCreateInnovationNumber() {
-        innovationTracker.clearSeenConnections()
-
         val input1 = NodeGene(1, NodeGene.INPUT_DEPTH, NodeType.INPUT)
         val output1 = NodeGene(2, NodeGene.OUTPUT_DEPTH, NodeType.OUTPUT)
 
@@ -28,8 +41,6 @@ class InnovationTrackerTest {
 
     @Test
     fun testIncrementInnovationNumber() {
-        innovationTracker.clearSeenConnections()
-
         val input1 = NodeGene(1, NodeGene.INPUT_DEPTH, NodeType.INPUT)
         val output1 = NodeGene(2, NodeGene.OUTPUT_DEPTH, NodeType.OUTPUT)
         val hidden1 = NodeGene(3, NodeGene.calculateHiddenDepth(input1, output1), NodeType.HIDDEN)
@@ -52,8 +63,6 @@ class InnovationTrackerTest {
 
     @Test
     fun testRetrieveSameInnovationNumber() {
-        innovationTracker.clearSeenConnections()
-
         val input1 = NodeGene(1, NodeGene.INPUT_DEPTH, NodeType.INPUT)
         val output1 = NodeGene(2, NodeGene.OUTPUT_DEPTH, NodeType.OUTPUT)
 
@@ -82,5 +91,27 @@ class InnovationTrackerTest {
         )
 
         assertEquals(connection1.innovationNumber, connection3.innovationNumber)
+    }
+
+    // Test Node ID tracker
+    @Test
+    fun testGetNewNodeID() {
+        val initialID = innovationTracker.getNewNodeID()
+        val newNodeID = innovationTracker.getNewNodeID()
+
+        assertNotEquals(initialID, newNodeID)
+        assert(newNodeID > initialID)
+    }
+
+    @Test
+    fun testNodeIDExists() {
+        val nodeID = innovationTracker.getNewNodeID()
+        assert(innovationTracker.nodeIDExists(nodeID))
+    }
+
+    @Test
+    fun testNodeIDDoesNotExist() {
+        val nodeID = innovationTracker.getNewNodeID()
+        assertFalse(innovationTracker.nodeIDExists(nodeID + 1))
     }
 }
