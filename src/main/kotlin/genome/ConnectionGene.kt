@@ -19,9 +19,8 @@ data class ConnectionGene(val innovationNumber: Int, val inNodeGene: NodeGene, v
     }
 
     override fun hashCode(): Int {
-        var result = innovationNumber
-        result = 31 * result + inNodeGene.hashCode()
-        result = 31 * result + outNodeGene.hashCode()
+        var result = 31 + inNodeGene.nodeID
+        result = 31 * result + outNodeGene.nodeID
         return result
     }
 }

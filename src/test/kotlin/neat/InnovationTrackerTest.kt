@@ -114,4 +114,31 @@ class InnovationTrackerTest {
         val nodeID = innovationTracker.getNewNodeID()
         assertFalse(innovationTracker.nodeIDExists(nodeID + 1))
     }
+
+
+    // Test Add Node to Connection
+    @Test
+    fun testAddNodeToConnection() {
+        // Create Node 1 -> Node 2
+        val inputNode = NodeGene(1, NodeGene.INPUT_DEPTH, NodeType.INPUT)
+        val outputNode = NodeGene(2, NodeGene.OUTPUT_DEPTH, NodeType.OUTPUT)
+
+        // Connect them
+        val innovationID = innovationTracker.getOrCreateInnovationNumber(inputNode, outputNode)
+        val connectionGene = ConnectionGene(innovationID, inputNode, outputNode, 1f, true)
+
+        // Create a new node between them
+        val newNodeID = innovationTracker.getNewNodeIDBetweenConnection(connectionGene)
+
+        // Node exists
+        assert(innovationTracker.nodeIDExists(newNodeID))
+
+        // If we create a new node, it should be different
+        val anotherNewNodeID = innovationTracker.getNewNodeID()
+        assertNotEquals(newNodeID, anotherNewNodeID)
+
+        // If we try to create a new node in the same connection, shall return the same node ID
+        val sameNewNodeID = innovationTracker.getNewNodeIDBetweenConnection(connectionGene)
+        assertEquals(newNodeID, sameNewNodeID)
+    }
 }
