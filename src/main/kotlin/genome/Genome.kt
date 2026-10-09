@@ -1,7 +1,5 @@
 package genome
 
-//import kotlin.math.E
-
 data class Genome(val nodeGenes: List<NodeGene>, val connectionGenes: List<ConnectionGene>) {
 
     fun feedForward(input: FloatArray): FloatArray {

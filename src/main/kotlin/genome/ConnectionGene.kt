@@ -1,6 +1,8 @@
 package genome
 
-data class ConnectionGene(val innovationNumber: Int, val inNodeGene: NodeGene, val outNodeGene: NodeGene,
+typealias InnovationNumber = Int
+
+data class ConnectionGene(val innovationNumber: InnovationNumber, val inNodeGene: NodeGene, val outNodeGene: NodeGene,
     val weight: Float, val enabled: Boolean){
 
     override fun toString(): String {

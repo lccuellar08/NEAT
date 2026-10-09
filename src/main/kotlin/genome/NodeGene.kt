@@ -2,8 +2,10 @@ package genome
 
 import kotlin.math.exp
 
+typealias NodeID = Int
+
 enum class NodeType { INPUT, HIDDEN, BIAS, OUTPUT }
-data class NodeGene(val nodeID: Int, val layerDepth: Double, val nodeType: NodeType) {
+data class NodeGene(val nodeID: NodeID, val layerDepth: Double, val nodeType: NodeType) {
 
     companion object {
         val INPUT_DEPTH = 0.0
