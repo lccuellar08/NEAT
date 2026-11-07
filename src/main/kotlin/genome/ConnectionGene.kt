@@ -6,7 +6,7 @@ data class ConnectionGene(val innovationNumber: InnovationNumber, val inNodeGene
     val weight: Float, val enabled: Boolean){
 
     override fun toString(): String {
-        return "\n$innovationNumber (${"%.2f".format(weight)}): ${inNodeGene.nodeID} -${if(enabled) "-" else "x" }> ${outNodeGene.nodeID}"
+        return "\n$innovationNumber (${"%.2f".format(weight)}): ${inNodeGene} -${if(enabled) "-" else "x" }> ${outNodeGene}"
     }
 
     override fun equals(other: Any?): Boolean {

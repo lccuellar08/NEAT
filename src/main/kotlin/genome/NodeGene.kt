@@ -4,7 +4,12 @@ import kotlin.math.exp
 
 typealias NodeID = Int
 
-enum class NodeType { INPUT, HIDDEN, BIAS, OUTPUT }
+enum class NodeType(val shortName: String) {
+    INPUT("I"),
+    HIDDEN("H"),
+    BIAS("B"),
+    OUTPUT("O")
+}
 data class NodeGene(val nodeID: NodeID, val layerDepth: Double, val nodeType: NodeType) {
 
     companion object {
@@ -28,6 +33,6 @@ data class NodeGene(val nodeID: NodeID, val layerDepth: Double, val nodeType: No
     }
 
     override fun toString(): String {
-        return "[$nodeID]: $nodeType"
+        return "[$nodeID]: ${nodeType.shortName}"
     }
 }

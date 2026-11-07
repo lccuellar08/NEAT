@@ -46,4 +46,32 @@ data class Genome(val nodeGenes: List<NodeGene>, val connectionGenes: List<Conne
 
         return output
     }
+
+    fun containsConnectionGene(inNodeGene: NodeGene, outNodeGene: NodeGene): Boolean {
+        val dummyConnectionGene = ConnectionGene(
+            -1, inNodeGene, outNodeGene, 0f, true
+        )
+
+        return connectionGenes.contains(dummyConnectionGene)
+    }
+
+    fun isFullyConnected(): Boolean {
+        this
+            .nodeGenes
+            .groupBy { it.layerDepth } // Go through each layer
+            .entries
+            .sortedBy { it.key }
+            .forEach {( layerDepth,nodesInLayer) ->
+                val nodesAfterThisLayer = this.nodeGenes.filter {it.layerDepth > layerDepth}
+                nodesInLayer.forEach {inNode ->
+                    nodesAfterThisLayer.forEach {outNode ->
+                        if(! this.containsConnectionGene(inNode, outNode)) {
+                            return false
+                        }
+                    }
+                }
+            }
+
+        return true
+    }
 }

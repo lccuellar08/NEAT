@@ -2,6 +2,7 @@ package genome
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class GenomeTest {
     private val testGenome = genome {
@@ -71,5 +72,63 @@ class GenomeTest {
         // 1 1 -> 0
         val resultOneOne = xorGenome.feedForward(floatArrayOf(1f, 1f)).first()
         assert(resultOneOne < 0.5f) {"1,1 result should be < 0.5 but got $resultOneOne"}
+    }
+
+    @Test
+    fun testSmallGenomeFullyConnected() {
+        val connectedGenome = genome {
+            val inputNode1 = node(1, NodeGene.INPUT_DEPTH, NodeType.INPUT)
+            val outputNode1 = node(2, NodeGene.OUTPUT_DEPTH, NodeType.OUTPUT)
+            val hiddenNode1 = node(3, NodeGene.calculateHiddenDepth(inputNode1, outputNode1), NodeType.HIDDEN)
+
+            connection(1, inputNode1, outputNode1, 1f)
+            connection(2, inputNode1, hiddenNode1, 1f)
+            connection(3, hiddenNode1, outputNode1, 1f)
+        }
+
+        assert(connectedGenome.isFullyConnected())
+    }
+
+    @Test
+    fun testLargeGenomeNotFullyConnected() {
+        val connectedGenome = genome {
+            val inputNode1 = node(1, NodeGene.INPUT_DEPTH, NodeType.INPUT)
+            val outputNode1 = node(2, NodeGene.OUTPUT_DEPTH, NodeType.OUTPUT)
+            val hiddenNode1 = node(3, NodeGene.calculateHiddenDepth(inputNode1, outputNode1), NodeType.HIDDEN)
+            val hiddenNode2 = node(4, NodeGene.calculateHiddenDepth(inputNode1, outputNode1), NodeType.HIDDEN)
+
+            connection(1, inputNode1, outputNode1, 1f)
+            connection(2, inputNode1, hiddenNode1, 1f)
+            connection(3, hiddenNode1, outputNode1, 1f)
+            connection(4, inputNode1, hiddenNode2, 1f)
+            connection(5, hiddenNode2, outputNode1, 1f)
+        }
+
+        assert(connectedGenome.isFullyConnected())
+    }
+
+    @Test
+    fun testGenomeNotFullyConnected() {
+        val notConnectedGenome = genome {
+            val inputNode1 = node(1, NodeGene.INPUT_DEPTH, NodeType.INPUT)
+            val outputNode1 = node(2, NodeGene.OUTPUT_DEPTH, NodeType.OUTPUT)
+            val hiddenNode1 = node(3, NodeGene.calculateHiddenDepth(inputNode1, outputNode1), NodeType.HIDDEN)
+            val hiddenNode2 = node(4, NodeGene.calculateHiddenDepth(inputNode1, outputNode1), NodeType.HIDDEN)
+
+            connection(1, inputNode1, outputNode1, 1f)
+            connection(2, inputNode1, hiddenNode1, 1f)
+            connection(3, hiddenNode1, outputNode1, 1f)
+            connection(4, inputNode1, hiddenNode2, 1f)
+            // Missing hidden2 -> output1
+        }
+
+        assertFalse(notConnectedGenome.isFullyConnected())
+    }
+
+    @Test
+    fun testContainsConnectionGene() {
+        val inNodeGene = NodeGene(1, NodeGene.INPUT_DEPTH, NodeType.INPUT)
+        val outNodeGene = NodeGene(2, NodeGene.OUTPUT_DEPTH, NodeType.OUTPUT)
+        assert(testGenome.containsConnectionGene(inNodeGene, outNodeGene))
     }
 }

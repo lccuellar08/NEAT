@@ -1,24 +1,36 @@
 package genome
 
-class GenomeBuilder {
-    private val nodes = mutableListOf<NodeGene>()
-    private val connections = mutableListOf<ConnectionGene>()
+class GenomeBuilder(base: Genome? = null) {
+    private val nodes = base?.nodeGenes?.toMutableList() ?: mutableListOf<NodeGene>()
+    private val connections = base?.connectionGenes?.toMutableList() ?: mutableListOf<ConnectionGene>()
 
-    fun node(id: Int, layerDepth: Double, type: NodeType): NodeGene {
+    fun node(id: NodeID, layerDepth: Double, type: NodeType): NodeGene {
         val newNode = NodeGene(id, layerDepth, type)
         nodes.add(newNode)
         return newNode
     }
 
-    fun connection(innovationNumber: Int, fromNode: NodeGene, toNode: NodeGene, weight: Float, enabled: Boolean = true) {
+    fun connection(innovationNumber: InnovationNumber, fromNode: NodeGene, toNode: NodeGene, weight: Float, enabled: Boolean = true) {
         connections.add(ConnectionGene(innovationNumber, fromNode, toNode, weight, enabled))
     }
 
     fun build(): Genome {
-        return Genome(nodes, connections)
+        return Genome(nodes.toList(), connections.toList())
+    }
+
+    fun getNodes(): List<NodeGene> {
+        return this.nodes.toList()
+    }
+
+    fun getConnections(): List<ConnectionGene> {
+        return this.connections.toList()
     }
 }
 
 fun genome(block: GenomeBuilder.() -> Unit): Genome {
     return GenomeBuilder().apply(block).build()
+}
+
+fun Genome.edit(block: GenomeBuilder.() -> Unit): Genome {
+    return GenomeBuilder(this).apply(block).build()
 }
